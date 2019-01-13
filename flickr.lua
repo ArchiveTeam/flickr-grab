@@ -17,6 +17,9 @@ local discovered_photos = {}
 local users = {}
 local found_user = false
 
+local failures = 0
+local maxfailures = 25
+
 for ignore in io.open("ignore-list", "r"):lines() do
   downloaded[ignore] = true
 end
@@ -212,7 +215,15 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     html = read_file(file)
     if string.match(html, "<h3>We're having some trouble displaying this photo at the moment%. Please try again%.</h3>") then
       print("Flickr is having problems!")
-      abortgrab = true
+      if failures > maxfailures then
+        abortgrab = true
+      end
+      failures = failures + 5 -- we weight this up since other requests work fine even when we're banned on one endpoint
+      return {}
+    else
+      if failures > 0 then
+        failures = failures - 1
+      end
     end
     if item_type == "disco" and string.match(url, "^https?://api%.flickr%.com/services/rest") then
       local json = load_json_file(html)
