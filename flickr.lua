@@ -112,10 +112,15 @@ allowed = function(url, parenturl)
     end
   elseif item_type == "photos" or item_type == "photoscc" then
     if string.match(url, "^https?://www%.flickr%.com/photos/[^/]+/with/[0-9]+/")
-        or string.match(url, "^https?://www%.flickr%.com/photos/[^/]+/[0-9]+$") then
+    or string.match(url, "^https?://www%.flickr%.com/photos/[^/]+/[0-9]+$") 
+    or string.match(url, "^https?://www%.flickr%.com/photos/[^/]+/sets/")
+    then
       return false
     end
-    if string.match(url, "^https?://www%.flickr%.com/photos/") or string.match(url, "^https?://www%.flickr%.com/video_download%.gne") or string.match(url, "^https?://[^%.]+%.staticflickr%.com/") then
+    if string.match(url, "^https?://www%.flickr%.com/photos/")
+    or string.match(url, "^https?://www%.flickr%.com/video_download%.gne")
+    or string.match(url, "^https?://[^%.]+%.staticflickr%.com/")
+    then
       for i in string.gmatch(url, "([0-9]+)") do
         if users[i] then
           return true
