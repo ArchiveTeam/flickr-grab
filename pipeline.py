@@ -299,11 +299,13 @@ class WgetArgs(object):
         elif item_type == 'photoscc':
             r = http_client.fetch('http://195.201.219.254/' + item_value, method='GET')
             for s in r.body.decode('utf-8', 'ignore').splitlines():
-                s = s.strip()
+                s = s.strip(' \t\r\n/')
                 if s.startswith('www.flickr.com/photos/'):
                     s = '/'.join(s.split('/')[2:4])
+                elif s.startswith('www.flickr.com/'):
+                    s = '/'.join(s.split('/')[1:3])
                 elif s.startswith('flickr.com/'):
-                    s = s.split('/', 1)[1].rstrip('/')
+                    s = s.split('/', 1)[1]
                 user, i = s.split('/') # NOTE: do not replace with anything that skips invalid urls, we want to catch those with pipeline aborts
                 wget_args.extend(['--warc-header', 'flickr-photo: {}'.format(i)])
                 wget_args.extend(['--warc-header', 'flickr-photo-user: {}'.format(user)])
